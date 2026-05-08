@@ -1,0 +1,215 @@
+dotnet new mvc -n BlogMVC
+
+crear Entidades
+
+crear Entidades/Usuario
+
+Microsoft.EntityFrameworkCore.SqlServer
+    dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 9.0.0
+    dotnet add package Microsoft.EntityFrameworkCore.Tools --version 9.0.2
+    dotnet add package Microsoft.EntityFrameworkCore.Design --version 9.0.2
+
+Identity.EntityFrameworkCore
+    dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 9.0.13
+
+crear Datos
+crear Datos/ApplicationDbContext
+ 
+agregar en appsettings.Development.json
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=DESKTOP-O8P9EBV\\SQLEXPRESS;Database=BlogMV;Integrated Security=True;TrustServerCertificate=true;",
+    },
+
+agregar a Program.cs
+    // Configurar bd
+    builder.Services.AddDbContextFactory<ApplicationDbContext>(opciones => opciones.UseSqlServer("name=DefaultConnection"));
+
+    // Configurar Identity.EntityFrameworkCore
+    builder.Services.AddIdentity<Usuario, IdentityRole>(opciones =>
+    {
+        opciones.SignIn.RequireConfirmedAccount = false;
+    }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+    // configurar urls por defecto del login
+    builder.Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme,
+        opciones =>
+        {
+            opciones.LoginPath = "/usuarios/login";
+            opciones.AccessDeniedPath = "/usuarios/login";
+        } 
+    );
+
+
+Crear migracion
+dotnet ef migrations add SistemaDeUsuarios  -   Add-Migration SistemaDeUsuarios
+dotnet ef database update                   -   Update-Database
+
+
+crear Models/RegistroViewModel
+crear Models/LoginViewModel
+crear Controllers/UsuariosController
+
+crear Views/Usuarios/Registro
+crear Views/Usuarios/Login
+crear Views/Shared/_LinksLogin
+
+crear Entidades/Entrada
+crear Entidades/Comentario
+
+Crear migracion
+dotnet ef migrations add TablasEntradasYComentarios 
+dotnet ef database update  
+
+remover la utlima migracion
+dotnet ef migrations remove
+****
+public string? UsuarioId { get; set; } para evitar multipes cascadas
+
+
+Azure.Storage.Blobs
+dotnet add package Azure.Storage.Blobs
+
+    copiar AzureStorage en appsettings.Development.json
+ 
+crear Servicios
+crear Servicios/IAlmacenadorArchivos
+crear Servicios/AlmacenadorArchivosAzure
+crear Servicios/AlmacenadorArchivosLocal
+
+ agregar a Program.cs
+    // Subir archivos
+    builder.Services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+
+crear Servicios/ServicioUsuarios
+    agregar al Program.cs
+        builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
+
+crear Servicios/Constantes
+
+crear Utilidades
+crear Utilidades/Seeding
+    agregar a Program.cs
+        builder.Services.AddDbContextFactory<ApplicationDbContext>(opciones => opciones.UseSqlServer("name=DefaultConnection") 
+            .UseSeeding(Seeding.Aplicar) // Aplicar Seedings
+            .UseAsyncSeeding(Seeding.AplicarAsync)
+        );
+    
+    aplicar Seeding
+        dotnet ef database update  -- Update-Database
+
+crear Models/UsuarioViewModel
+crear Models/UsuariosListadoViewModel
+crear Views/Usuarios/Listado
+
+crear Models/UsuariosRolViewModel
+crear Models/UsuariosRolesUsuarioViewModel
+crear Models/EditarRolesViewModel
+crear Views/Usuarios/RolesUsuario
+
+entradas@correo.com
+borrar@correo.com
+sin-roles@correo.com
+Ab123456789!
+
+crear Models/EntradaCrearViewModel
+crear Controllers/EntradasController
+
+Quill
+https://quilljs.com/docs/quickstart
+    en _Layout
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+crear Views/Entradas
+crear Views/Entradas/Crear
+crear en js/formulario-entradas.js
+
+
+crear Models/EntradaDetalleViewModel
+cambira Views/Home/Privacy por NoEncontrado
+crear Views/Entrada/Detalle 
+
+https://highlightjs.org/
+poner en _Layout
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+
+crear Models/EntradaEditarViewModel
+crear Views/Entrada/Editar 
+crear Utilidades/HttpContextExtensions
+
+crear Models/EntradasComentarViewModel
+crear Controllers/ComentariosController
+crear Models/ComentarioViewModel
+crear Views/Comentarios 
+crear Views/Comentarios/Borrar 
+
+agregar HasQueryFilter en ApplicationDbContext
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        // trae los comentarios que no han sido borrados
+        builder.Entity<Comentario>().HasQueryFilter(x => !x.Borrado);
+        // trae los entradas que no han sido borrados
+        builder.Entity<Entrada>().HasQueryFilter(x => !x.Borrado);
+    }
+
+    y para omitir los HasQueryFilter 
+
+    var entrada = await context.Entradas
+            .IgnoreQueryFilters()   // Agregar esta linea
+            .Include(x => x.UsuarioCreacion)
+            .Include(x => x.Comentarios)
+                .ThenInclude(x => x.Usuario)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+Blazor 
+    Views/_Imports
+
+    agregar en _Layout
+        <base href="~/" />
+        <component type="typeof(Microsoft.AspNetCore.Components.Web.HeadOutlet)" render-mode="ServerPrerendered" />
+
+    agreagar a Index/Home
+        @section Scripts{
+            <script src="_framework/blazor.server.js"></script>
+        }
+
+
+    agreagar a Program.cs
+        // Agregar blazor del lado del servidor
+        builder.Services.AddServerSideBlazor();
+
+        // Balzor
+        app.MapBlazorHub();
+
+crear Views/Home/Componentes
+crear Views/Home/Componentes/Counter
+crear Views/Home/Componentes/ListadoEntradas
+crear Models/HomeIndexEntradaViewModel
+
+agregar 100 entradas
+    DECLARE @usuarioCreacionId NVARCHAR(450);
+    DECLARE @contador INT = 1;
+    DECLARE @titulo NVARCHAR(255);
+    DECLARE @cuerpo NVARCHAR(MAX);
+
+    SELECT @usuarioCreacionId = Id FROM AspNetUsers;
+
+    WHILE @contador <= 100
+    BEGIN
+        SET @titulo = 'Entrada ' + CAST(@contador AS NVARCHAR(10));
+        SET @cuerpo = '[{"insert":"Este es el cuerpo de la entrada ' + CAST(@contador AS NVARCHAR(10)) + ' \n"}]';
+
+        INSERT INTO [dbo].[Entradas] ([Titulo], [Cuerpo], [FechaPublicacion], [UsuarioCreacionId], [Borrado])
+        VALUES (@titulo, @cuerpo, DATEADD(d, @contador, GETDATE()), @usuarioCreacionId, 'false');
+
+        SET @contador = @contador + 1;
+    END
+
+
+crear js/cargar-mas-elementos.js
+agregar al _Layout
+    <script src="~/js/cargar-mas-elementos.js" asp-append-version="true"></script>
