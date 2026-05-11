@@ -23,6 +23,7 @@ public class AnalisisSentimientosRecurrente : BackgroundService
                 await analisisSentimientos.ProcesarLotesPendientes();
             }
 
+            await Task.Delay(TimeSpan.FromDays(30), stoppingToken);
             // await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
         }
     }
