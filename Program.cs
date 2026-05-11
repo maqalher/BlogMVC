@@ -35,6 +35,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 builder.Services.AddTransient<IServicioChat, ServicioChatOpenAI>();
+builder.Services.AddTransient<IServicioImagenes, ServicioImagenesOpenAI>();
+builder.Services.AddScoped<IAnalisisSentimientos, AnalisisSentimientosOpenAI>();
+
+builder.Services.AddHttpClient();
 
 // Configurar tarea de fondo
 builder.Services.AddHostedService<AnalisisSentimientosRecurrente>();

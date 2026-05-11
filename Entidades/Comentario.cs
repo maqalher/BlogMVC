@@ -14,4 +14,5 @@ public class Comentario
     public string? UsuarioId { get; set; } // agretgar ? para evitar multiples cascadas
     public Usuario? Usuario { get; set; }
     public bool Borrado { get; set; }
+    public int? Puntuacion { get; set; }
 }

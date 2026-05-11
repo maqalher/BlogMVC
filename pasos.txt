@@ -250,5 +250,24 @@ crear Servicios/IServicioImagenes
 crear Jobs
 crear Jobs/AnalisisSentimientosRecurrente
 
+editar bd agregar punacion a comentarios
+    public int? Puntuacion { get; set; }
+crear Entidades/Lote
+Crear migracion
+dotnet ef migrations add LotesYPuntuacion 
+dotnet ef database update  
+
+crear Servicios/AnalisisSentimientosOpenAI
+crear Servicios/
+    agregar a Program.cs
+        builder.Services.AddScoped<IAnalisisSentimientos, AnalisisSentimientosOpenAI>();
+
+        builder.Services.AddHttpClient();
+
+
+crear Models/EntradasConComentariosNegativosViewModel
+crear Views/Entradas/ConComentariosNegativos
+
 ¿Como conectamos a SQL Server desde ASP.NET Core usando Entity Framework Core?
 Ejemplos de uso de bucles en c#
+
