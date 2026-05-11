@@ -1,14 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f26f1966-4b59-4215-88b0-01b71ce7b871</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Configuraciones\" />
     <Folder Include="Datos\" />
     <Folder Include="Entidades\" />
+    <Folder Include="Jobs\" />
     <Folder Include="Servicios\" />
     <Folder Include="Utilidades\" />
     <Folder Include="Views\Comentarios\" />
@@ -33,6 +36,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="OpenAI" Version="2.1.0" />
   </ItemGroup>
 
 </Project>

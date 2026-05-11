@@ -29,6 +29,7 @@
     <div class="mb-3">
         <input type="hidden" id="imagenRemovida" name="imagenRemovida" value="false" />
         <input type="hidden" asp-for="ImagenPortadaActual" />
+        <input type="hidden" asp-for="ImagenPortadaIA" />
 
         <label asp-for="ImagenPortada" class="form-label"></label>
 
@@ -37,14 +38,24 @@
             style="@(mostrarInputFile ? "display: block;" : "display:none")"
         />
 
+        <div>
+            <img id="loading-imagen-ia" class="mt-2 mb-2" 
+            style="width: 100px; display: none" src="~/img/loading.gif" />
+        </div>
+
         <span asp-validation-for="ImagenPortada" class="text-danger"></span>
 
         <img id="PreviewImagen" class="mb-3 mt-3" src="@Model.ImagenPortadaActual"
              style="@(mostrarInputFile ? "display: none;" : "display: block;") width: 400px" />
 
-        <button id="btnRemoverImagen" onclick="removerImagen()" type="button"
+        <div class="mt-2">
+            <button type="button" class="btn btn-secondary mt-2" onclick="generarImagen()">Generar</button>
+
+            <button id="btnRemoverImagen" onclick="removerImagen()" type="button"
                 class="btn btn-secondary" 
                 style="@(mostrarInputFile ? "display: none;" : "display: inline;")">Remover</button>
+        </div>
+
 
     </div>
 

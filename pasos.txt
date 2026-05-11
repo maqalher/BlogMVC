@@ -213,3 +213,42 @@ agregar 100 entradas
 crear js/cargar-mas-elementos.js
 agregar al _Layout
     <script src="~/js/cargar-mas-elementos.js" asp-append-version="true"></script>
+
+
+crear Configuraciones
+crear Configuraciones/ConfiguracionesIA
+
+agregar a Program.cs
+    // configuracion variables ConfiguracionesIA
+    builder.Services.AddOptions<ConfiguracionesIA>()
+        .Bind(builder.Configuration.GetSection(ConfiguracionesIA.Seccion))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+Agregar OpenAI
+    dotnet add package OpenAI --version 2.1.0
+
+        agregar a Program.cs
+            // Agregar servicios de openAI
+            builder.Services.AddScoped(sp =>
+            {
+                var configuracionesIA = sp.GetRequiredService<IOptions<ConfiguracionesIA>>();
+                return new OpenAIClient(configuracionesIA.Value.LlaveOpenAI);
+            });
+
+crear Servicios/ServicioChatOpenAI
+crear Servicios/IServicioChat
+    agregar a Program.cs
+        builder.Services.AddTransient<IServicioChat, ServicioChatOpenAI>();
+
+crear Servicios/ServicioImagenesOpenAI
+crear Servicios/IServicioImagenes
+    agreagar a Program.cs
+    builder.Services.AddTransient<IServicioImagenes, ServicioImagenesOpenAI>();
+
+
+crear Jobs
+crear Jobs/AnalisisSentimientosRecurrente
+
+¿Como conectamos a SQL Server desde ASP.NET Core usando Entity Framework Core?
+Ejemplos de uso de bucles en c#
